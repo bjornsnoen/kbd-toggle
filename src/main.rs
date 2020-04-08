@@ -1,9 +1,8 @@
 use x11::xlib;
-use std::ffi::CString;
 use std::os::raw::c_uint;
 use std::os::raw::c_ulong;
+use std::ptr;
 use std::mem;
-use libc;
 
 const XKB_ALL_NAMES_MASK: c_uint = 0x3fff;
 const XKB_ALL_CTRLS_MASK: c_ulong = 0xF8001FFF;
@@ -19,8 +18,7 @@ fn main() {
 }
 
 unsafe fn initialize_xkb() -> xlib::XkbDescPtr {
-    let display_name: CString = CString::new("").expect("Cstring fucked up");
-    let display = xlib::XOpenDisplay(display_name.as_ptr());
+    let display = xlib::XOpenDisplay(ptr::null());
 
     let keyboard: xlib::XkbDescPtr = xlib::XkbAllocKeyboard();
     (*keyboard).dpy = display;
@@ -32,8 +30,7 @@ unsafe fn initialize_xkb() -> xlib::XkbDescPtr {
 
 unsafe fn get_state(keyboard: xlib::XkbDescPtr) -> xlib::XkbStatePtr
 {
-    let size = mem::size_of::<xlib::XkbStateRec>();
-    let state: xlib::XkbStatePtr = libc::malloc(size) as xlib::XkbStatePtr;
+    let state: xlib::XkbStatePtr = mem::MaybeUninit::uninit().assume_init();
 
     xlib::XkbGetState((*keyboard).dpy, (*keyboard).device_spec.into(), state);
     return state;
