@@ -1,7 +1,7 @@
 [package]
 name = "kbd-toggle"
 version = "0.1.0"
-authors = ["Bjørn Snoen <bjorn.snoen@visma.com>"]
+authors = ["Bjørn Snoen <bjorn.snoen@gmail.com>"]
 edition = "2018"
 
 

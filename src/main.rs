@@ -41,11 +41,12 @@ unsafe fn use_next_layout(keyboard: xlib::XkbDescPtr) {
     let state = get_state(keyboard);
     let current_group = (*state).group as u32;
 
-    let mut next: u32 = current_group + 1;
-    if next >= num_groups as u32 {
-        next = 0;
-    }
-    xlib::XkbLockGroup((*keyboard).dpy, (*keyboard).device_spec.into(), next as u32);
+    let next = match current_group + 1 >= num_groups as u32 {
+        true => 0,
+        false => current_group + 1
+    };
+
+    xlib::XkbLockGroup((*keyboard).dpy, (*keyboard).device_spec.into(), next);
 }
 
 unsafe fn count_groups(keyboard: xlib::XkbDescPtr) -> u8 {
