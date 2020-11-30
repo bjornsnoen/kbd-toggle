@@ -30,10 +30,10 @@ unsafe fn initialize_xkb() -> xlib::XkbDescPtr {
 
 unsafe fn get_state(keyboard: xlib::XkbDescPtr) -> xlib::XkbStatePtr
 {
-    let state: xlib::XkbStatePtr = mem::MaybeUninit::uninit().assume_init();
+    let mut state = mem::MaybeUninit::<xlib::XkbStateRec>::uninit();
 
-    xlib::XkbGetState((*keyboard).dpy, (*keyboard).device_spec.into(), state);
-    return state;
+    xlib::XkbGetState((*keyboard).dpy, (*keyboard).device_spec.into(), state.as_mut_ptr());
+    return state.as_mut_ptr();
 }
 
 unsafe fn use_next_layout(keyboard: xlib::XkbDescPtr) {
